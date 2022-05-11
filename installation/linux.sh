@@ -1,5 +1,9 @@
 #!/bin/bash
 
+read -p "Please enter your home directory [$HOME]: " HOME_DIR
+HOME_DIR=${HOME_DIR:-$HOME}
+echo $HOME_DIR
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 CONFIG_DIR=$( realpath "${SCRIPT_DIR}/.." )
 
@@ -9,8 +13,7 @@ CONFIG_DIR=$( realpath "${SCRIPT_DIR}/.." )
 # Params: ($1)Source, ($2)Target
 function link() {
     # Check if target file exists
-    test -f $2
-    if [ $? -eq 0 ]; then
+    if test -f $2; then
         # Compare target with source
         cmp -s $1 $2
         if [ $? -eq 0 ]; then
@@ -26,39 +29,46 @@ function link() {
     fi
 }
 
-# Creates a link ONLY if the file exists
-# Params: ($1)Source, ($2)Target
-function link_overwrite() {
+# Modifies a .desktop file, making sure it uses electron-launcher (for electron Wayland/X11 compat)
+# Params: Path-to-file ($1)
+function use_electron_launcher() {
     # Check if target file exists
-    test -f $2
-    if [ $? -eq 0 ]; then
+    if test -f "$1"; then
         # Check if you have write permissions
-        test -w $2
+        test -w $1
         if [ $? -eq 0 ]; then
-            rm $2
-            ln -s $1 $2
-            echo -e "[\e[32mOK\e[0m] Overwrote: $2"
+			local HOME_DIR_ESCAPED_SLASHES=$(echo $HOME_DIR | sed "s/\//\\\\\//g")
+            sed -i 's/Exec=.*electron-launcher /Exec=/' $1
+			sed -i "s/Exec=/Exec=$HOME_DIR_ESCAPED_SLASHES\/bin\/electron-launcher /" $1
+			local NAME=$(echo $1 | rev | cut -d\/ -f1 | rev)
+            echo -e "[\e[32mOK\e[0m] Using electron-launcher: $NAME"
         else
-            echo -e "[\e[31mERR\e[0m] You do not have write permissions. Did you mean to sudo? $2"
+            echo -e "[\e[31mERR\e[0m] You do not have write permissions. Did you mean to sudo? $1"
         fi
     else
-        echo -e "[\e[31mERR\e[0m] The target file does not exist. Maybe you have forgotten to install a package? $2"
+        echo -e "[\e[31mERR\e[0m] The target file does not exist: $1"
     fi
 }
 
 # ----------------------------------------------------------
 
+
 # VS Code settings
-mkdir -p ~/.config/Code/User
-link "${CONFIG_DIR}/keybindings.json" "${HOME}/.config/Code/User/keybindings.json"
-link "${CONFIG_DIR}/settings.json" "${HOME}/.config/Code/User/settings.json"
+mkdir -p "$HOME_DIR/.config/Code/User"
+link "${CONFIG_DIR}/keybindings.json" "${HOME_DIR}/.config/Code/User/keybindings.json"
+link "${CONFIG_DIR}/settings.json" "${HOME_DIR}/.config/Code/User/settings.json"
+
 
 # Vim
-link "${CONFIG_DIR}/.vimrc" "${HOME}/.vimrc"
+link "${CONFIG_DIR}/.vimrc" "${HOME_DIR}/.vimrc"
+
 
 # Wayland electron applications
-mkdir -p ~/.bashrc.d
-link "${CONFIG_DIR}/wayland-electron-aliases" "${HOME}/.bashrc.d/wayland-electron-aliases"
+mkdir -p "${HOME_DIR}/bin"
+link "${CONFIG_DIR}/linux/electron-launcher" "${HOME_DIR}/bin/electron-launcher"
 
-link_overwrite "${CONFIG_DIR}/code.desktop" "/usr/share/applications/code.desktop"
-link_overwrite "${CONFIG_DIR}/google-chrome.desktop" "/usr/share/applications/google-chrome.desktop"
+mkdir -p ~/.bashrc.d
+link "${CONFIG_DIR}/linux/electron-aliases" "${HOME_DIR}/.bashrc.d/electron-aliases"
+
+use_electron_launcher "/usr/share/applications/code.desktop"
+use_electron_launcher "/usr/share/applications/google-chrome.desktop"

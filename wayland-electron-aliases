@@ -1,3 +1,0 @@
-alias code='code --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland'
-alias chrome='google-chrome --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland'
-

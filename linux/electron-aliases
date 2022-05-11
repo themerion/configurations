@@ -1,0 +1,3 @@
+alias code='electron-launcher code'
+alias chrome='electron-launcher google-chrome'
+

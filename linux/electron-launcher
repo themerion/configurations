@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Usage:
+#	electron-launcher [exefile] [argument1] [argument2] ...
+#
+# If wayland is being used, launches electron apps with the appropriate settings.
+
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+	$@ --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland
+else
+	$@
+fi
