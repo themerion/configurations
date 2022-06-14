@@ -1,3 +1,10 @@
 {
-    "window.titleBarStyle": "custom"
+    "window.titleBarStyle": "custom",
+    "workbench.colorTheme": "Visual Studio Light",
+    "go.toolsManagement.autoUpdate": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+	"workbench.colorCustomizations": {
+		"editorError.background": "#ff0000",
+		"editorWarning.background": "#aaff00"
+	}
 }
