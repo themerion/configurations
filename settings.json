@@ -4,7 +4,8 @@
     "go.toolsManagement.autoUpdate": true,
     "typescript.updateImportsOnFileMove.enabled": "always",
 	"workbench.colorCustomizations": {
-		"editorError.background": "#ff0000",
-		"editorWarning.background": "#aaff00"
-	}
+		"editorError.background": "#ff000055",
+		"editorWarning.background": "#aaff0055"
+    },
+    "editor.renderWhitespace": "none"
 }
