@@ -7,5 +7,6 @@
 		"editorError.background": "#ff000055",
 		"editorWarning.background": "#aaff0055"
     },
-    "editor.renderWhitespace": "none"
+    "editor.renderWhitespace": "none",
+    "editor.minimap.enabled": false
 }

@@ -17,7 +17,7 @@ function link() {
         # Compare target with source
         cmp -s $1 $2
         if [ $? -eq 0 ]; then
-            echo -e "[\e[32mOK\e[0m] Up to date: $2"
+            echo -e "[\e[93mOK\e[0m] Up to date: $2"
         else
             echo -e "[\e[31mERR\e[0m] Exists and have different content: $2"
         fi
@@ -61,6 +61,13 @@ link "${CONFIG_DIR}/settings.json" "${HOME_DIR}/.config/Code/User/settings.json"
 
 # Vim
 link "${CONFIG_DIR}/.vimrc" "${HOME_DIR}/.vimrc"
+
+
+# Bash prompt
+mkdir -p "$HOME_DIR/.bashrc.d"
+mkdir -p "$HOME_DIR/opt"
+link "${CONFIG_DIR}/linux/bash-prompt" "${HOME_DIR}/.bashrc.d/bash-prompt"
+link "${CONFIG_DIR}/linux/git-prompt.sh" "${HOME_DIR}/opt/git-prompt.sh"
 
 
 # Wayland electron applications
